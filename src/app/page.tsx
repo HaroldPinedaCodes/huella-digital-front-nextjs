@@ -1,10 +1,36 @@
-import { Button } from "@/components/ui/button";
-// import Image from "next/image";
+import { CategoryRepository, ProductService } from "@/lib/api";
 
-export default function Home() {
+import { Hero } from "@/components/home/Hero";
+import { Features } from "@/components/home/Features";
+import { CategoryList } from "@/components/common/CategoryList";
+import { ProductGrid } from "@/components/products/ProductGrid";
+
+export default async function HomePage() {
+  const productService = new ProductService();
+  const categoryRepo = new CategoryRepository();
+
+  const [getAllProducts, categories] = await Promise.all([
+    productService.getAllProducts(),
+    categoryRepo.getAll(),
+  ]);
+
+  console.log(getAllProducts);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <Button>Click me</Button>
+    <div className="space-y-12">
+      <Hero />
+
+      <section className="max-w-7xl mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-6">Categorías</h2>
+        <CategoryList categories={categories} />
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-6">Productos Destacados</h2>
+        <ProductGrid products={getAllProducts} />
+      </section>
+
+      <Features />
     </div>
   );
 }
